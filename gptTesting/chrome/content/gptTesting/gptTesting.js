@@ -38,7 +38,7 @@ function NetListener(outputStream)
     // Get unique file within user profile directory. 
     var file = dirService.get("ProfD", Ci.nsIFile);
     file.append("gptTesting");
-    file.append("netMonitor.txt");
+    file.append("prodVsDev.txt");
     file.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, 0666);
 
     // Initialize output stream.
@@ -94,22 +94,22 @@ NetListener.prototype =
 			} else if(url.indexOf('pubads.g.doubleclick.net/gampad/') != -1) {
 				text += "GPT:";
 				text += "\n";
+				text += url;
+				text += "\n\n";
 
 				var params = url.split("&");
 
 				for (x in params) {
 					param = params[x];
-					if(param == 'iu_parts') {
-						text += param;
-						text += "\n";
-					} else if(param == 'prev_ui_szs') {
-						text += param;
-						text += "\n";
-					} else if(param == 'prev_scp') {
-						text += param;
-						text += "\n";
-					} else if(param == 'cust_params') {
-						text += param;
+					var vals = param.split("=");
+					var key = vals[0];
+					var val = vals[1];
+					if(key == 'iu_parts'
+						|| key == 'prev_iu_szs'
+						|| key == 'prev_scp'
+						|| key == 'cust_params') {
+						//text += "(" + key + ")\n";
+						text += decodeURIComponent(val);
 						text += "\n";
 					}
 				}
@@ -149,6 +149,8 @@ GptTestingPanel.prototype = extend(Firebug.Panel,
 		this.panelNode = doc.createElement( "div" );
 		this.panelNode.ownerPanel = this;
 		this.panelNode.className = "panelNode";
+		this.panelNode.style.padding = "20px";
+		this.panelNode.style.fontSize = "14px";
 		doc.body.appendChild( this.panelNode );
     },
 
