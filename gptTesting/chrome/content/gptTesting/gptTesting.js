@@ -37,7 +37,7 @@ function NetListener(outputStream)
 {
     // Get unique file within user profile directory. 
     var file = dirService.get("ProfD", Ci.nsIFile);
-    file.append("netlistener");
+    file.append("gptTesting");
     file.append("netMonitor.txt");
     file.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, 0666);
 
@@ -52,10 +52,11 @@ function NetListener(outputStream)
 
 NetListener.prototype = 
 {
+
     onRequest: function(context, file)
     {
         if (FBTrace.DBG_NETLISTENER)
-            FBTrace.sysout("netListener.onResponse; " + (file ? file.href : ""));
+            FBTrace.sysout("netListener.onRequest; " + (file ? file.href : ""));
     },
 
     onExamineResponse: function(context, request)
@@ -71,9 +72,53 @@ NetListener.prototype =
 
         try
         {
-            var text = file.href + " (" + formatTime
-                (file.endTime - file.startTime) + ")\n";
-            this.outputStream.write(text, text.length);
+            //var text = file.href + " (" + formatTime(file.endTime - file.startTime) + ")\n";
+			
+
+			var text = '';
+			var url = file.href;
+			if(file.requestNumber == 1) {
+				text += "=====================================================================\n";
+				text += url + "\n";
+				text += "=====================================================================\n";
+			} else if(url.indexOf('ad.doubleclick.net/N3865/adj/parents.mdp.com/') != -1) {
+
+				var params = url.split(";");
+
+				for (x in params) {
+					param = params[x];
+					text += param;
+					text += "\n";
+				}
+
+			} else if(url.indexOf('pubads.g.doubleclick.net/gampad/') != -1) {
+				text += "GPT:";
+				text += "\n";
+
+				var params = url.split("&");
+
+				for (x in params) {
+					param = params[x];
+					if(param == 'iu_parts') {
+						text += param;
+						text += "\n";
+					} else if(param == 'prev_ui_szs') {
+						text += param;
+						text += "\n";
+					} else if(param == 'prev_scp') {
+						text += param;
+						text += "\n";
+					} else if(param == 'cust_params') {
+						text += param;
+						text += "\n";
+					}
+				}
+			}
+			//text += file.href + " (" + formatTime(file.endTime - file.startTime) + ")\n";
+			if(text != '') {
+				this.outputStream.write(text, text.length);
+			}
+
         }
         catch (err)
         {
@@ -86,13 +131,50 @@ NetListener.prototype =
     {
         if (FBTrace.DBG_NETLISTENER)
             FBTrace.sysout("netListener.onResponseBody; " + (file ? file.href : ""), file);
-    }
+    },
 };
+
+
+function GptTestingPanel() {}
+GptTestingPanel.prototype = extend(Firebug.Panel,
+{
+    name: "GptTesting",
+    title: "GPT Testing",
+
+    initialize: function(context, doc ) {
+		Firebug.Panel.initialize.apply( this, arguments );
+
+		this.context = context;
+		this.document = doc;
+		this.panelNode = doc.createElement( "div" );
+		this.panelNode.ownerPanel = this;
+		this.panelNode.className = "panelNode";
+		doc.body.appendChild( this.panelNode );
+    },
+
+	getContext: function() {
+		return this.context;
+	},
+
+	/*
+	 * Called whenever the panel comes into view. Like toggling between browser tabs.
+	 * @override
+	 */
+	show: function() {
+		//_dump( "show: arguments=" + arguments + "\n" );
+
+		this.panelNode.innerHTML = 'Sorry there is nothing here. Open your NET panel and the information should be logged to your %APPDATA%\\Mozilla\\Firefox\\Profiles\\{yourProfile}\\gptTesting folder.';
+	},
+
+});
+
+
 
 // ************************************************************************************************
 // Registration
 
 Firebug.registerModule(Firebug.NetListenerModule);
+Firebug.registerPanel(GptTestingPanel); 
 
 // ************************************************************************************************
 }});

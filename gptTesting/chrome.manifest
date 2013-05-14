@@ -1,0 +1,2 @@
+content gptTesting chrome/content/gptTesting/ xpcnativewrappers=no
+overlay chrome://firebug/content/firebugOverlay.xul         chrome://gptTesting/content/gptTesting.xul

@@ -5,7 +5,7 @@
 
   <Description about="urn:mozilla:install-manifest">
     <em:id>ying.zhang@meredith.com</em:id>
-    <em:version>0.0.1</em:version>
+    <em:version>0.0.8</em:version>
    
     <!-- Firefox -->
     <em:targetApplication>

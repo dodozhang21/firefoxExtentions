@@ -1,2 +1,0 @@
-content gbtTesting chrome/content/gbtTesting/ xpcnativewrappers=no
-overlay chrome://firebug/content/firebugOverlay.xul         chrome://gbtTesting/content/gbtTesting.xul

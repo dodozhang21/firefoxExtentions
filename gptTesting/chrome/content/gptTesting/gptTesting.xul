@@ -1,5 +1,5 @@
 <?xml version="1.0"?> 
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"> 
-    <script src="chrome://gbtTesting/content/gbtTesting.js" type="application/x-javascript"/> 
+    <script src="chrome://gptTesting/content/gptTesting.js" type="application/x-javascript"/> 
 </overlay>
